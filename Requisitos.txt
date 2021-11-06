@@ -1,0 +1,35 @@
+Requisitos:
+    - Python 3.6.9
+    - Mysql-server
+    - Mysql-conector [ pip3 install mysql-connector-python ]
+
+    -->> https://gist.github.com/ujjwal96/1dcd57542bdaf3c9d1b0dd526ccd44ff    
+    - PyQt5 (Interface grafica)
+	-Instalacion Windows (https://pypi.org/project/PyQt5/): pip install PyQt5
+    - PyQt5-tools (Herramienta grafica)
+	-Instalacion Windows (https://stackoverflow.com/questions/42090739/pyqt5-how-to-install-run-qt-designer): pip install pyqt5-tools
+    
+    - pip3 install --user pyqt5  
+    - sudo apt-get install python3-pyqt5  
+    - sudo apt-get install pyqt5-dev-tools
+    - sudo apt-get install qttools5-dev-tools
+    -->>
+Git:
+
+- subir archivo :https://www.youtube.com/watch?v=jgeLj45G0tk
+
+- git clone [remote-name o url]	 #Clona el repositorio
+- git fetch [remote-name o url]	 #Trae los cambios del repositorio
+
+- git add: [ https://github.com/git-guides/git-add ]
+		- git add [name_archivo.ext] #Aniade el archivo
+		- git add -u #Aniade todos los archivos modificados y new no eliminados	
+		- git add -A #Aniade todos los archivos modificados,new y eliminados
+
+
+- Aniadimos la direccion de git[remote]:
+	- git remote add Nombre_Direccion Direccion[https:sincomillas.com]
+-1 [ git add -A ]
+-2 [ git commit -m "Comentario" ]
+-3 [ git pull]
+-4 [ git push Nombre_Direccion rama[master] ]
