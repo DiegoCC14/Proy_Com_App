@@ -26,6 +26,9 @@ Git:
 		- git add -u #Aniade todos los archivos modificados y new no eliminados	
 		- git add -A #Aniade todos los archivos modificados,new y eliminados
 
+#Puede que se pida para realizar commit:
+- git --global user.name "nombre_duenio_repositorio"
+- git --global user.email "email_duenio_repositorio.gmail.com"
 
 - Aniadimos la direccion de git[remote]:
 	- git remote add Nombre_Direccion Direccion[https:sincomillas.com]
