@@ -1,4 +1,5 @@
 import mysql.connector
+from datetime import datetime
 
 def Abrir_Conexion():
 	#Conecta con la Base de Datos ( DB [Data Base])
@@ -88,3 +89,66 @@ def Insert_SQL( sql , Nombre_Tabla , Diccionario_Campos ):
 		cur.execute("INSERT INTO " + Nombre_Tabla + Campos_Tabla + " VALUES " + str( tuple(Diccionario_Campos.values()) ) )
 	
 	sql.commit() #Guardamos los cambios
+
+def Insert_SQL_mult_values( sql , Nombre_Tabla , Diccionario_Campos , Atributo_List_Multiple ):
+	#Genera declaracion de insert de varios values.
+	
+	Campos_Tabla = '('
+	Campo_Values = "("
+	for Campo in Diccionario_Campos.keys():
+		if Campo != Atributo_List_Multiple:
+			Campos_Tabla += Campo + ','
+			if type(Diccionario_Campos[Campo]) == str:
+				Campo_Values += "'{}'".format( Diccionario_Campos[Campo] ) + "," #Tipo String
+			elif type(Diccionario_Campos[Campo]) == int or type(Diccionario_Campos[Campo]) == float:
+				Campo_Values += str(Diccionario_Campos[Campo]) + "," #Tipo Float
+			elif type(Diccionario_Campos[Campo]) == datetime:
+				Campo_Values += "TO_DATE('{}','DD/MM/YYYY')".format( Diccionario_Campos[Campo] ) + "," #Tipo Date
+
+	Campos_Tabla += Atributo_List_Multiple #Dejamos el atributo lista al final
+		
+	Campos_Tabla += ')'
+
+	Consulta = "INSERT INTO " + Nombre_Tabla + Campos_Tabla + " VALUES "
+	ValuesTotal = ""
+	for Atributo_list in Diccionario_Campos[Atributo_List_Multiple]:
+		if type(Atributo_list) == str:
+			ValuesTotal += Campo_Values + "'{}'".format( Atributo_list ) +")," #Tipo String
+		elif type(Atributo_list) == int or type(Diccionario_Campos[Campo]) == float:
+ 			ValuesTotal += Campo_Values + str(Atributo_list) +")," #Tipo Float
+		elif type(Atributo_list) == datetime:
+			ValuesTotal += Campo_Values + "TO_DATE('{}','DD/MM/YYYY')".format( Atributo_list ) +"),"
+
+	ValuesTotal = ValuesTotal[0:len(ValuesTotal)-1]
+	Consulta += ValuesTotal
+
+	print(Consulta)
+
+	cur = sql.cursor()
+	cur.execute( Consulta )
+	sql.commit() #Guardamos los cambios	
+''''
+Diccionario_Campos = {
+	"stock":0,
+	"Fecha_de_vencimiento": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+	"fecha_de_ingreso": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+	"nombre_de_producto2": "JORGITO 300g"
+}
+'''
+Diccionario_Campos = {
+	"id_ingreso2": 1,
+	"codigo_de_barras": ["dsaddsadadasd","dasfddasdaasdadc","fasdasdadcdwdaa","vvdwdadasdadc4444","vcxfsfadasdadc"]
+}
+#print(Diccionario_Campos)
+sql = Abrir_Conexion()
+#Insert_SQL_mult_values( "'sql'" , "Productos" , Diccionario_Campos , "Lista_Stock" )
+
+#print( Ver_Tablas_de_DB(sql) )
+#['Categorias_Productos', 'Ingreso_de_productos', 'Productos', 'Stock_disponible']
+
+#Insert_SQL_mult_values( sql , 'Stock_disponible' , Diccionario_Campos,"codigo_de_barras" ) #GUARDAMOS EL NOMBRE DEL PRODUCTO
+
+#print( Ver_Nombres_Campos_Tabla( sql , 'Stock_disponible' ) )
+print( Ver_Tabla( sql , 'Stock_disponible' ) )
+
+Cerrar_Conexion( sql )

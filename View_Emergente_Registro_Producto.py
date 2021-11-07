@@ -1,7 +1,9 @@
 from PyQt5 import uic #Carga la interfaz  grafica
 from PyQt5.QtWidgets import QMainWindow , QApplication , QDialog
 
+
 import SQL_get
+from datetime import datetime
 
 class Ventana_Emergente_Registro_Producto( QMainWindow ):
 	def __init__(self):
@@ -12,12 +14,29 @@ class Ventana_Emergente_Registro_Producto( QMainWindow ):
 		
 		#------------------------>>>>> Configuraciones predeterminadas	
 		self.Cargar_Categorias()
-		self.Button_Registrar_PRD.setEnabled(False) #Boton Renombrar deshabilitado
+
+		#Si Boton Valido vallda el producto, Registra Producto
+		self.Button_Registrar_PRD.setEnabled(False) #Boton registrar deshabilitado al principio,
+		self.Button_Modificar_Producto.setEnabled(True) #Boton registrar deshabilitado al principio,
 		#------------------------>>>>>
 
 		#------------------------>>>>> Acciones Buttons
 		self.Button_Validar_Producto.clicked.connect( self.Validar_Producto_Nuevo )
+		self.Button_Modificar_Producto.clicked.connect( self.Modificar_Producto )
+		self.Button_Limpiar_Datos.clicked.connect( self.Limpiar_Cajas_Input )
 		#------------------------>>>>>
+	def Modificar_Producto(self):
+		self.Estado_Campos_InputText_Select( True )
+		self.Button_Registrar_PRD.setEnabled(False) #Boton registrar hibilitado
+		self.Button_Modificar_Producto.setEnabled(False) #Boton modificar hibilitado
+		self.Button_Validar_Producto.setEnabled(True) #Boton modificar deshibilitado
+
+	def Estado_Campos_InputText_Select(self , Estado): #True y los campo se podran cambiar
+		self.Entrada_Nombre_Producto.setReadOnly( not Estado )
+		self.Entrada_Precio_Producto.setReadOnly( not Estado )
+		self.Entrada_Fecha_de_Vencimiento.setReadOnly( not Estado )
+		self.Entrada_Codigo_Barras_Producto.setReadOnly( not Estado )
+		self.Button_Select_Categoria_Producto.setEnabled( Estado )
 
 	def Cargar_Categorias(self):
 		
@@ -29,25 +48,6 @@ class Ventana_Emergente_Registro_Producto( QMainWindow ):
 		for Cat in Categorias:
 			lista_categorias.append( Cat['nombre'] )
 		self.Button_Select_Categoria_Producto.addItems(lista_categorias) #Agregamos strings a select
-
-	def Validar_Producto_Nuevo(self):
-		
-		Nombre_Producto = self.Entrada_Nombre_Producto.toPlainText().upper()
-		Precio_Producto = self.Entrada_Precio_Producto.toPlainText().upper()
-		try:
-			Precio_Producto = float(Precio_Producto)
-			print(Precio_Producto)
-			
-		except:
-			print("Solo numero y 1 punto[.]")
-
-		Fecha_Producto = self.Entrada_Fecha_de_Vencimiento.toPlainText().upper()
-		
-		lista_codigos_barra = self.Retorna_lista_de_Codigos_Barra()
-		
-		print( lista_codigos_barra )
-		
-		Select_Categoria = self.Button_Select_Categoria_Producto.currentText() #Categoria seleccionada
 
 	def Retorna_lista_de_Codigos_Barra( self ):
 		
@@ -66,4 +66,88 @@ class Ventana_Emergente_Registro_Producto( QMainWindow ):
 		if len(barra)>0:
 			lista_codigos_barras.append( barra )
 
+		set_elementos = set( lista_codigos_barras )
+		lista_codigos_barras = list(set_elementos)
 		return lista_codigos_barras
+
+	def Validar_Producto_Nuevo(self):
+		
+		Nombre_Producto = self.Entrada_Nombre_Producto.toPlainText().upper()
+		Select_Categoria = self.Button_Select_Categoria_Producto.currentText() #Categoria seleccionada
+
+		Precio_Producto = self.Entrada_Precio_Producto.toPlainText().upper()
+		try:
+			Precio_Producto = float(Precio_Producto)
+			self.Label_Precio_Venta.setText( "Correcto" )
+			Precio_Correcto = True
+		except:
+			self.Label_Precio_Venta.setText( "Valor Invalido, ejemplo: 14.50" )
+			Precio_Correcto = False
+
+		Fecha_Vencimiento_Correcto = True
+		Fecha_Venc_Ingresado = self.Entrada_Fecha_de_Vencimiento.toPlainText().upper()
+		if Fecha_Venc_Ingresado != "" and Fecha_Venc_Ingresado != " " and Fecha_Venc_Ingresado != "  ": #Que no ingreso espacios vacios
+			try:
+				Fecha_Venc_Ingresado += " 23:59:59" #Las fechas incluiran el dia completo como vencimiento
+				Fecha_Venc_Ingresado = datetime.strptime( Fecha_Venc_Ingresado , '%d/%m/%y %H:%M:%S')
+				if datetime.now()>Fecha_Venc_Ingresado: #Fecha de vencimiento sera mayor a la actual
+					Fecha_Vencimiento_Correcto = False
+					self.Label_Fecha_Vencimiento.setText('Fecha Vencida;' + ' d/m/a-ej: 22/6/21')
+			except:
+				Fecha_Vencimiento_Correcto = False
+				self.Label_Fecha_Vencimiento.setText('Fecha Mal Ingresada ;' + ' d/m/a-ej: 22/6/21')
+
+		lista_codigos_barra = self.Retorna_lista_de_Codigos_Barra()
+		
+		if len(lista_codigos_barra) > 0:
+			self.Label_Stock_Producto.setText( str(len(lista_codigos_barra)) + " Productos Sin Repetir" )
+		else:
+			self.Label_Stock_Producto.setText( "0 Productos Sin Repetir - Ingrese un producto" )
+
+		TextoGeneral = "Verifique Campo:"
+		if Precio_Correcto == False:
+			TextoGeneral += " Precio ;"
+		if Fecha_Vencimiento_Correcto == False:
+			TextoGeneral += " Fecha_Vencimiento ;"
+		if len(lista_codigos_barra) == 0:
+			TextoGeneral += " Stock ;"
+		
+		Nombre_Valido = True
+		if Nombre_Producto == "" or Nombre_Producto== " " or Nombre_Producto== "  " or Nombre_Producto== "   ":
+			Nombre_Valido = False
+			TextoGeneral += " Nombre ;"
+
+		if TextoGeneral == "Verifique Campo:": #Si no tenemos error, el string seguira igual
+			TextoGeneral = "Correcto Para Ingresar"
+		
+		self.Label_Estado_Accion_Genearada.setText( TextoGeneral )
+
+		if ( Precio_Correcto and Fecha_Vencimiento_Correcto and len(lista_codigos_barra)>0 and Nombre_Valido ): #Si todo esta bien entonces Registramos
+			self.Button_Registrar_PRD.setEnabled(True) #Boton registrar hibilitado
+			self.Button_Modificar_Producto.setEnabled(True) #Boton modificar hibilitado
+			self.Button_Validar_Producto.setEnabled(False) #Boton modificar deshibilitado
+			
+			self.Estado_Campos_InputText_Select( False )
+
+	def Registrar_Producto_en_DB( self ):
+		sql = SQL_get.Abrir_Conexion()
+		
+		Nombre_Producto = self.Entrada_Nombre_Producto.toPlainText().upper()
+		Select_Categoria = self.Button_Select_Categoria_Producto.currentText() #Categoria seleccionada
+		Precio_Producto = self.Entrada_Precio_Producto.toPlainText().upper()
+		Fecha_Venc_Ingresado = self.Entrada_Fecha_de_Vencimiento.toPlainText().upper()
+		
+		lista_codigos_barra = self.Retorna_lista_de_Codigos_Barra()
+
+		SQL_get.Insert_SQL( sql , Nombre_Tabla , Diccionario_Campos )
+
+		SQL_get.Cerrar_Conexion( sql )
+		self.Button_Select_Categoria.addItems(lista_categorias) #Agregamos strings a select
+
+	def Limpiar_Cajas_Input( self ):
+		self.Entrada_Nombre_Producto.setText("")
+		self.Entrada_Precio_Producto.setText("")
+		self.Entrada_Fecha_de_Vencimiento.setText("")
+		self.Entrada_Codigo_Barras_Producto.setText("")
+		self.Estado_Campos_InputText_Select( True ) #Podremos modificar producto
+
