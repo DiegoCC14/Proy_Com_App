@@ -24,6 +24,7 @@ class Ventana_Emergente_Registro_Producto( QMainWindow ):
 		self.Button_Validar_Producto.clicked.connect( self.Validar_Producto_Nuevo )
 		self.Button_Modificar_Producto.clicked.connect( self.Modificar_Producto )
 		self.Button_Limpiar_Datos.clicked.connect( self.Limpiar_Cajas_Input )
+		self.Button_Registrar_PRD.clicked.connect( self.Registrar_Producto_en_DB )
 		#------------------------>>>>>
 	def Modificar_Producto(self):
 		self.Estado_Campos_InputText_Select( True )
@@ -130,19 +131,47 @@ class Ventana_Emergente_Registro_Producto( QMainWindow ):
 			self.Estado_Campos_InputText_Select( False )
 
 	def Registrar_Producto_en_DB( self ):
-		sql = SQL_get.Abrir_Conexion()
 		
 		Nombre_Producto = self.Entrada_Nombre_Producto.toPlainText().upper()
 		Select_Categoria = self.Button_Select_Categoria_Producto.currentText() #Categoria seleccionada
 		Precio_Producto = self.Entrada_Precio_Producto.toPlainText().upper()
 		Fecha_Venc_Ingresado = self.Entrada_Fecha_de_Vencimiento.toPlainText().upper()
-		
 		lista_codigos_barra = self.Retorna_lista_de_Codigos_Barra()
+		
+		Dicc_Productos = {
+		"nombre_de_producto": Nombre_Producto ,
+		"precio_venta": Precio_Producto ,
+		"stock": len(lista_codigos_barra) ,
+		"categoria": Select_Categoria
+		}
 
-		SQL_get.Insert_SQL( sql , Nombre_Tabla , Diccionario_Campos )
+		sql = SQL_get.Abrir_Conexion()
+
+		SQL_get.Insert_SQL( sql , 'Productos' , Dicc_Productos )
+
+		Dicc_Ingreso_Productos = {
+		#"ID_ingreso":, No necesario, autoincremental
+		"stock": len(lista_codigos_barra),
+		"fecha_de_ingreso": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+		"nombre_de_producto2": Nombre_Producto
+		}
+		if len(Fecha_Venc_Ingresado)>=6: #Se ingreso fecha de vencimiento
+			Dicc_Ingreso_Productos["Fecha_de_vencimiento"] = Fecha_Venc_Ingresado
+		
+		SQL_get.Insert_SQL( sql , 'Ingreso_de_productos' , Dicc_Ingreso_Productos )
+		id_ultimo_ingreso = SQL_get.Ultimo_Valor_Campo_Ingrsado( sql , 'Ingreso_de_productos' , 'ID_ingreso' )
+
+		Dicc_Stock = {
+			"id_ingreso2": id_ultimo_ingreso,
+			"codigo_de_barras": lista_codigos_barra
+		}
+		
+		SQL_get.Insert_SQL_mult_values( sql , 'Stock_disponible' , Dicc_Stock , 'codigo_de_barras' )
 
 		SQL_get.Cerrar_Conexion( sql )
-		self.Button_Select_Categoria.addItems(lista_categorias) #Agregamos strings a select
+
+		self.Label_Estado_Accion_Genearada.setText( Nombre_Producto + " se ingreso correctamente " )
+		self.Limpiar_Cajas_Input() #Limpiamos las cajas
 
 	def Limpiar_Cajas_Input( self ):
 		self.Entrada_Nombre_Producto.setText("")

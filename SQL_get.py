@@ -122,33 +122,27 @@ def Insert_SQL_mult_values( sql , Nombre_Tabla , Diccionario_Campos , Atributo_L
 	ValuesTotal = ValuesTotal[0:len(ValuesTotal)-1]
 	Consulta += ValuesTotal
 
-	print(Consulta)
-
 	cur = sql.cursor()
 	cur.execute( Consulta )
 	sql.commit() #Guardamos los cambios	
-''''
-Diccionario_Campos = {
-	"stock":0,
-	"Fecha_de_vencimiento": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-	"fecha_de_ingreso": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-	"nombre_de_producto2": "JORGITO 300g"
-}
+
+def Ultimo_Valor_Campo_Ingrsado( sql , nombre_tabla , nombre_campo ):
+	cur = sql.cursor()
+	Consulta = 'SELECT MAX(' + nombre_campo + ') FROM '+ nombre_tabla 
+	cur.execute( Consulta )
+	return cur.fetchone()[0]
+
 '''
-Diccionario_Campos = {
-	"id_ingreso2": 1,
-	"codigo_de_barras": ["dsaddsadadasd","dasfddasdaasdadc","fasdasdadcdwdaa","vvdwdadasdadc4444","vcxfsfadasdadc"]
+Dicc_Productos = {
+"nombre_de_producto": 'SAL FINA P' ,
+"precio_venta": 87 ,
+"stock": len([]) ,
+"categoria": 'CONDIMENTO'
 }
-#print(Diccionario_Campos)
+
 sql = Abrir_Conexion()
-#Insert_SQL_mult_values( "'sql'" , "Productos" , Diccionario_Campos , "Lista_Stock" )
 
-#print( Ver_Tablas_de_DB(sql) )
-#['Categorias_Productos', 'Ingreso_de_productos', 'Productos', 'Stock_disponible']
-
-#Insert_SQL_mult_values( sql , 'Stock_disponible' , Diccionario_Campos,"codigo_de_barras" ) #GUARDAMOS EL NOMBRE DEL PRODUCTO
-
-#print( Ver_Nombres_Campos_Tabla( sql , 'Stock_disponible' ) )
-print( Ver_Tabla( sql , 'Stock_disponible' ) )
+Insert_SQL( sql , 'Productos' , Dicc_Productos )
 
 Cerrar_Conexion( sql )
+'''
