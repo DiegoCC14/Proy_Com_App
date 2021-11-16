@@ -132,17 +132,19 @@ def Ultimo_Valor_Campo_Ingrsado( sql , nombre_tabla , nombre_campo ):
 	cur.execute( Consulta )
 	return cur.fetchone()[0]
 
-'''
-Dicc_Productos = {
-"nombre_de_producto": 'SAL FINA P' ,
-"precio_venta": 87 ,
-"stock": len([]) ,
-"categoria": 'CONDIMENTO'
-}
+def Buscar_Elementos_En_Tabla( sql , nombre_tabla , atributo , valor_buscar ):
+	
+	Nombres_Campos_Tabla = Ver_Nombres_Campos_Tabla( sql , nombre_tabla )
 
-sql = Abrir_Conexion()
-
-Insert_SQL( sql , 'Productos' , Dicc_Productos )
-
-Cerrar_Conexion( sql )
-'''
+	cur = sql.cursor()
+	Consulta = "SELECT * FROM {} WHERE {} LIKE '{}' ".format( nombre_tabla , atributo , valor_buscar )
+	cur.execute( Consulta )
+	
+	Tabla = []
+	for fila in cur.fetchall():
+		Diccionario = {}
+		for x in range( len( Nombres_Campos_Tabla ) ):
+			Diccionario[ Nombres_Campos_Tabla[x] ] = fila[x]  
+		Tabla.append( Diccionario )
+	return( Tabla ) #Retorna una lista con todas las filas de DB
+	

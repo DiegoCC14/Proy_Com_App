@@ -243,7 +243,7 @@
       <string>ESTADO:</string>
      </property>
     </widget>
-    <widget class="QTextEdit" name="textEdit">
+    <widget class="QTextEdit" name="Entrada_Codigo_Barras">
      <property name="geometry">
       <rect>
        <x>150</x>
@@ -253,7 +253,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_13">
+    <widget class="QPushButton" name="Botton_Buscar_Producto_Codigo_Barras">
      <property name="geometry">
       <rect>
        <x>620</x>
@@ -271,12 +271,12 @@
       <rect>
        <x>200</x>
        <y>90</y>
-       <width>461</width>
+       <width>101</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
-      <string>PRODUCTO: ##############################################</string>
+      <string>PRODUCTO:</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_5">
@@ -284,12 +284,12 @@
       <rect>
        <x>200</x>
        <y>120</y>
-       <width>421</width>
+       <width>141</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>CODIGO BARRAS: ######################################</string>
+      <string>CODIGO BARRAS:</string>
      </property>
     </widget>
     <widget class="QLabel" name="label_6">
@@ -297,12 +297,12 @@
       <rect>
        <x>200</x>
        <y>150</y>
-       <width>421</width>
+       <width>71</width>
        <height>16</height>
       </rect>
      </property>
      <property name="text">
-      <string>PRECIO: ##############################################</string>
+      <string>PRECIO:</string>
      </property>
     </widget>
     <widget class="QListView" name="listView">
@@ -452,6 +452,58 @@
        </rect>
       </property>
      </widget>
+    </widget>
+    <widget class="QLabel" name="Texto_NombreProducto_Venta">
+     <property name="geometry">
+      <rect>
+       <x>310</x>
+       <y>90</y>
+       <width>441</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>#################################</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Texto_Codigo_Barras_Venta">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>120</y>
+       <width>401</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>############################</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Texto_Precio_Venta">
+     <property name="geometry">
+      <rect>
+       <x>284</x>
+       <y>150</y>
+       <width>481</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>####################################</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Texto_EstadoBusquedaProducto_Venta">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>28</y>
+       <width>441</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>#################################</string>
+     </property>
     </widget>
    </widget>
    <widget class="QGroupBox" name="GroupBox_Productos">
@@ -667,6 +719,25 @@
        <width>771</width>
        <height>582</height>
       </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="Button_Refrescar_Tabla_Productos">
+     <property name="geometry">
+      <rect>
+       <x>618</x>
+       <y>141</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>↻</string>
      </property>
     </widget>
    </widget>
